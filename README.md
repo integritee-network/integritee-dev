@@ -1,2 +1,5 @@
-# docker
-Base docker images
+# Integritee Base Docker Images
+
+### Parachain
+cd parachain && docker build .
+
