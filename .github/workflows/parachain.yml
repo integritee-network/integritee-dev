@@ -2,8 +2,7 @@ name: parachain-docker-template
 
 on:
   push:
-    branches:
-      - 'master'
+    branches:  [ main ]
 
 jobs:
   docker:
