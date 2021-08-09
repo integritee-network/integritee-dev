@@ -38,7 +38,7 @@ jobs:
             TAGS="$TAGS,${DOCKER_IMAGE}:latest"
           fi
           echo ::set-output name=tags::${TAGS}
-
+          echo ${{ steps.prep.outputs.tags }}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
         with:
