@@ -29,6 +29,9 @@ jobs:
             VERSION=nightly
           fi
           TAGS="${DOCKER_IMAGE}:${VERSION}"
+          if [ "${{ github.event.release.tag_name }}" != "" ]; then
+            VERSION=${{ github.event.release.tag_name }}
+          fi
           if [[ $VERSION =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
             TAGS="$TAGS,${DOCKER_IMAGE}:latest"
           fi
@@ -53,9 +56,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          key: ${{ runner.os }}-single-buildx-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-buildx-
+            ${{ runner.os }}-single-buildx-
             
       - name: Build and push
         id: docker_build
@@ -66,6 +69,16 @@ jobs:
           file: ${{env.working-directory}}/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.prep.outputs.tags }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+          
+        # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
           
       - name: Image digest
         run: 
