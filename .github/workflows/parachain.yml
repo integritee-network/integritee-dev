@@ -3,7 +3,9 @@ name: Build Parachain Docker Template
 on:
   push:
     branches:  [ main ]
-    
+  release:
+    types: [published]
+
 env:
   # github.repository as <account>/<repo>
   PARACHAIN_IMAGE_NAME: integritee/parachain-docker-template

@@ -18,4 +18,4 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y && \
 	rustup target add wasm32-unknown-unknown --toolchain nightly && \
 	rustup default stable 
 
-RUN echo "PATH=\"\$PATH:/root/.cargo/bin\"" >> /etc/environment
+RUN echo "PATH=\"$PATH:/root/.cargo/bin\"" >> /etc/environment
