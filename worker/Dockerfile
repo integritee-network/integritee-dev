@@ -17,7 +17,7 @@
 #  Intel SGX SDK and PSW installed
 #  Rust-sgx-sdk installed
 #  IPFS installed
-ARG VERSION_UBUNTU=1804
+ARG VERSION_UBUNTU=2004
 ARG VERSION_RUST_SGX_SDK=1.1.3
 
 FROM baiduxlab/sgx-rust:${VERSION_UBUNTU}-${VERSION_RUST_SGX_SDK}
@@ -49,7 +49,7 @@ RUN /root/.cargo/bin/rustup target install wasm32-unknown-unknown
 
 # install packages needed for substrate
 RUN apt-get update && \
-    apt-get install -y cmake pkg-config libssl-dev git gcc build-essential clang libclang-dev && \
+    apt-get install -y cmake pkg-config libssl-dev git gcc build-essential && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /var/cache/apt/archives/*
 
@@ -57,7 +57,7 @@ RUN apt-get update && \
 RUN apt-get update && \
     wget https://apt.llvm.org/llvm.sh && \
     chmod +x llvm.sh && \
-    sudo ./llvm.sh 10 && \
+    ./llvm.sh 10 && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /var/cache/apt/archives/*
 
@@ -74,5 +74,3 @@ ENV SGX_SDK /opt/sgxsdk
 ENV PATH "$PATH:${SGX_SDK}/bin:${SGX_SDK}/bin/x64:/root/.cargo/bin"
 ENV PKG_CONFIG_PATH "${PKG_CONFIG_PATH}:${SGX_SDK}/pkgconfig"
 ENV LD_LIBRARY_PATH "${LD_LIBRARY_PATH}:${SGX_SDK}/sdk_libs"
-ENV CC /usr/bin/clang-10
-ENV AR /usr/bin/llvm-ar-10
