@@ -8,7 +8,7 @@ on:
     
 env:
   # github.repository as <account>/<repo>
-  WORKER_IMAGE_NAME: integritee/worker-sgx-generic
+  WORKER_IMAGE_NAME: integritee/integritee-dev
   
 jobs:
   docker:
