@@ -44,8 +44,7 @@ RUN mkdir -p /ipfs && \
     cd go-ipfs && \
     ./install.sh
 
-# install WASM toolchain
-RUN /root/.cargo/bin/rustup target install wasm32-unknown-unknown
+RUN /root/.cargo/bin/rustup self update
 
 # install packages needed for substrate
 RUN apt-get update && \
