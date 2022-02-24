@@ -46,6 +46,14 @@ RUN mkdir -p /ipfs && \
 
 RUN /root/.cargo/bin/rustup self update
 
+# re-install / downgrade binutils since the baiduxlab/sgx-rust image 
+# comes with ld version 2.35 which cannot compile the node.
+RUN apt-get remove -y binutils && \
+    apt-get update && \
+    apt-get install -y binutils build-essential clang-10 debhelper dh-autoreconf \
+    dpkg-dev g++ g++-9 gcc gcc-8 gcc-9 libtool ocaml \
+    ocaml-compiler-libs ocaml-interp ocaml-nox
+
 # install packages needed for substrate
 RUN apt-get update && \
     apt-get install -y cmake pkg-config libssl-dev git gcc build-essential && \
