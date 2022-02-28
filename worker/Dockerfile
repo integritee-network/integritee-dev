@@ -18,7 +18,7 @@
 #  Rust-sgx-sdk installed
 #  IPFS installed
 ARG VERSION_UBUNTU=2004
-ARG VERSION_RUST_SGX_SDK=1.1.3
+ARG VERSION_RUST_SGX_SDK=1.1.4
 
 FROM baiduxlab/sgx-rust:${VERSION_UBUNTU}-${VERSION_RUST_SGX_SDK}
 LABEL maintainer="zoltan@integritee.network"
@@ -31,6 +31,7 @@ SHELL ["/bin/bash", "-c"]
 
 # install rsync
 RUN apt-get update && \
+    apt-get -y upgrade && \
     apt-get install -y --no-install-recommends \
     rsync && \
     rm -rf /var/lib/apt/lists/* && \
