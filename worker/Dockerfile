@@ -18,9 +18,9 @@
 #  Rust-sgx-sdk installed
 #  IPFS installed
 ARG VERSION_UBUNTU=2004
-ARG VERSION_RUST_SGX_SDK=1.1.4
+ARG VERSION_RUST_SGX_SDK=1.1.6
 
-FROM baiduxlab/sgx-rust:${VERSION_UBUNTU}-${VERSION_RUST_SGX_SDK}
+FROM niederb/sgx-rust:${VERSION_UBUNTU}-${VERSION_RUST_SGX_SDK}
 LABEL maintainer="zoltan@integritee.network"
 LABEL description="Generic Dockerfile for Intel SGX development and CI machines"
 ARG VERSION_IPFS=0.4.21
