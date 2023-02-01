@@ -16,6 +16,9 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y && \
 	export PATH="$PATH:$HOME/.cargo/bin" && \
 	rustup toolchain install nightly && \
 	rustup target add wasm32-unknown-unknown --toolchain nightly && \
-	rustup default stable 
+	rustup default stable
+
+# install netcat for healthcheck
+RUN apt-get update && apt-get install -yq netcat && cp /usr/bin/nc /usr/local/bin/
 
 RUN echo "PATH=\"$PATH:/root/.cargo/bin\"" >> /etc/environment
