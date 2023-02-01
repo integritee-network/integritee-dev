@@ -75,6 +75,9 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /var/cache/apt/archives/*
 
+# install netcat for healthcheck
+RUN apt-get update && apt-get install -yq netcat && cp /usr/bin/nc /usr/local/bin/
+
 # set environment variables
 ENV DEBIAN_FRONTEND noninteractive
 ENV TERM xterm
