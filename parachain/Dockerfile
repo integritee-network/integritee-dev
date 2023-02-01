@@ -19,6 +19,6 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y && \
 	rustup default stable
 
 # install netcat for healthcheck
-RUN apt-get update && apt-get install -yq netcat && cp /usr/bin/nc /usr/local/bin/
+RUN apt-get update && apt-get install -yq netcat
 
 RUN echo "PATH=\"$PATH:/root/.cargo/bin\"" >> /etc/environment

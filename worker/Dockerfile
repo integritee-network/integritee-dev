@@ -76,7 +76,7 @@ RUN apt-get update && \
     rm -rf /var/cache/apt/archives/*
 
 # install netcat for healthcheck
-RUN apt-get update && apt-get install -yq netcat && cp /usr/bin/nc /usr/local/bin/
+RUN apt-get update && apt-get install -yq netcat
 
 # set environment variables
 ENV DEBIAN_FRONTEND noninteractive
