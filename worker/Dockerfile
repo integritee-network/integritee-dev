@@ -23,30 +23,54 @@ FROM ubuntu:22.04
 
 # Install SGX
 
-RUN apt-get update && \
-    apt-get install -y build-essential ocaml automake autoconf libtool wget python3 libssl-dev dkms
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    ocaml \
+    automake \
+    autoconf \
+    libtool \
+    wget \
+    python3 \
+    libssl-dev \
+    dkms
 
 RUN echo 'deb [signed-by=/etc/apt/keyrings/intel-sgx-keyring.asc arch=amd64] https://download.01.org/intel-sgx/sgx_repo/ubuntu jammy main' | tee /etc/apt/sources.list.d/intel-sgx.list
 
 RUN wget https://download.01.org/intel-sgx/sgx_repo/ubuntu/intel-sgx-deb.key && cat intel-sgx-deb.key | tee /etc/apt/keyrings/intel-sgx-keyring.asc > /dev/null
 
-RUN apt-get update && apt-get install -y libsgx-epid libsgx-quote-ex libsgx-dcap-ql
+RUN apt-get update && apt-get install -y \
+    libsgx-epid \
+    libsgx-quote-ex \
+    libsgx-dcap-ql
 
 # Debug symbols for SGX
-RUN apt-get update && apt-get install -y libsgx-urts-dbgsym libsgx-enclave-common-dbgsym libsgx-dcap-ql-dbgsym libsgx-dcap-default-qpl-dbgsym
+RUN apt-get update && apt-get install -y \
+    libsgx-urts-dbgsym \
+    libsgx-enclave-common-dbgsym \
+    libsgx-dcap-ql-dbgsym \
+    libsgx-dcap-default-qpl-dbgsym
 
 # DCAP QPL
-RUN apt-get update && apt-get install -y libsgx-dcap-default-qpl libsgx-dcap-quote-verify libsgx-dcap-quote-verify-dev libsgx-dcap-quote-verify-dbgsym
+RUN apt-get update && apt-get install -y \
+    libsgx-dcap-default-qpl \ 
+    libsgx-dcap-quote-verify \ 
+    libsgx-dcap-quote-verify-dev \
+    libsgx-dcap-quote-verify-dbgsym
 
 # Install SGX SDK
 
-RUN apt-get update && apt-get install -y build-essential python3
+RUN apt-get update && apt-get install -y \ 
+    build-essential \
+    python3
 
 RUN wget https://download.01.org/intel-sgx/latest/linux-latest/distro/ubuntu22.04-server/sgx_linux_x64_sdk_2.18.101.1.bin && \
     chmod +x ./sgx_linux_x64_sdk_2.18.101.1.bin && \
     ./sgx_linux_x64_sdk_2.18.101.1.bin --prefix /opt/
 
-RUN apt-get update && apt-get install -y libsgx-enclave-common-dev libsgx-dcap-ql-dev libsgx-dcap-default-qpl-dev
+RUN apt-get update && apt-get install -y \
+    libsgx-enclave-common-dev \
+    libsgx-dcap-ql-dev \
+    libsgx-dcap-default-qpl-dev
 
 SHELL ["/bin/bash", "-c", "source /opt/sgxsdk/environment"]
 
