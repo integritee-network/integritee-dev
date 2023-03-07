@@ -120,13 +120,11 @@ RUN apt-get update && \
     rm -rf /var/cache/apt/archives/*
 
 # install LLVM to compile ring into WASM
-RUN apt-get update && \
-    apt-get install -y lsb-release wget software-properties-common gnupg && \
-    wget https://apt.llvm.org/llvm.sh && \
-    chmod +x llvm.sh && \
-    ./llvm.sh 13 && \
-    rm -rf /var/lib/apt/lists/* && \
-    rm -rf /var/cache/apt/archives/*
+RUN apt-get update && apt-get install -y \
+    clang-13 \
+    lldb-13 \
+    lld-13 \
+    clangd
 
 # install additional tools
 RUN apt-get update && \
