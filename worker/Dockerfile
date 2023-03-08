@@ -17,7 +17,6 @@
 #  Intel SGX SDK and PSW installed
 #  Rust-sgx-sdk installed
 #  IPFS installed
-ARG VERSION_RUST_SGX_SDK=1.1.6
 
 FROM ubuntu:22.04
 
