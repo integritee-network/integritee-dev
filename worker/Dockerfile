@@ -17,10 +17,77 @@
 #  Intel SGX SDK and PSW installed
 #  Rust-sgx-sdk installed
 #  IPFS installed
-ARG VERSION_UBUNTU=2004
-ARG VERSION_RUST_SGX_SDK=1.1.6
 
-FROM niederb/sgx-rust:${VERSION_UBUNTU}-${VERSION_RUST_SGX_SDK}
+FROM ubuntu:22.04
+
+# Install SGX
+
+# Note the manual cleanup step at the end of the command.
+# This is not required, but in the case of a base image change it may be.
+# See #8 for more details.
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    ocaml \
+    automake \
+    autoconf \
+    libtool \
+    wget \
+    python3 \
+    libssl-dev \
+    dkms \
+    && rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/apt/archives/*
+
+RUN echo 'deb [signed-by=/etc/apt/keyrings/intel-sgx-keyring.asc arch=amd64] https://download.01.org/intel-sgx/sgx_repo/ubuntu jammy main' | tee /etc/apt/sources.list.d/intel-sgx.list
+
+RUN wget https://download.01.org/intel-sgx/sgx_repo/ubuntu/intel-sgx-deb.key && cat intel-sgx-deb.key | tee /etc/apt/keyrings/intel-sgx-keyring.asc > /dev/null
+
+RUN apt-get update && apt-get install -y \
+    libsgx-epid \
+    libsgx-quote-ex \
+    libsgx-dcap-ql \
+    && rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/apt/archives/*
+
+# Debug symbols for SGX
+RUN apt-get update && apt-get install -y \
+    libsgx-urts-dbgsym \
+    libsgx-enclave-common-dbgsym \
+    libsgx-dcap-ql-dbgsym \
+    libsgx-dcap-default-qpl-dbgsym \
+    && rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/apt/archives/*
+
+# DCAP QPL
+RUN apt-get update && apt-get install -y \
+    libsgx-dcap-default-qpl \ 
+    libsgx-dcap-quote-verify \ 
+    libsgx-dcap-quote-verify-dev \
+    libsgx-dcap-quote-verify-dbgsym \
+    && rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/apt/archives/*
+
+# Install SGX SDK
+
+RUN apt-get update && apt-get install -y \ 
+    build-essential \
+    python3 \
+    && rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/apt/archives/*
+
+RUN wget https://download.01.org/intel-sgx/latest/linux-latest/distro/ubuntu22.04-server/sgx_linux_x64_sdk_2.18.101.1.bin && \
+    chmod +x ./sgx_linux_x64_sdk_2.18.101.1.bin && \
+    ./sgx_linux_x64_sdk_2.18.101.1.bin --prefix /opt/
+
+RUN apt-get update && apt-get install -y \
+    libsgx-enclave-common-dev \
+    libsgx-dcap-ql-dev \
+    libsgx-dcap-default-qpl-dev \
+    && rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/apt/archives/*
+
+SHELL ["/bin/bash", "-c", "source /opt/sgxsdk/environment"]
+
 LABEL maintainer="zoltan@integritee.network"
 LABEL description="Generic Dockerfile for Intel SGX development and CI machines"
 ARG VERSION_IPFS=0.4.21
@@ -45,38 +112,66 @@ RUN mkdir -p /ipfs && \
     cd go-ipfs && \
     ./install.sh
 
+# Install Rust
+RUN apt-get update && apt-get install -y curl
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
+
+RUN /root/.cargo/bin/rustup component add rust-src clippy rust-analysis rustfmt
 RUN /root/.cargo/bin/rustup self update
 
 # re-install / downgrade binutils since the baiduxlab/sgx-rust image 
 # comes with ld version 2.35 which cannot compile the node.
 RUN apt-get remove -y binutils && \
-    apt-get update && \
-    apt-get install -y binutils build-essential clang-10 debhelper dh-autoreconf \
-    dpkg-dev g++ g++-9 gcc gcc-8 gcc-9 libtool ocaml \
-    ocaml-compiler-libs ocaml-interp ocaml-nox
+    apt-get update && apt-get install -y \
+    binutils \ 
+    build-essential \
+    debhelper \
+    dh-autoreconf \
+    dpkg-dev \ 
+    g++ \ 
+    g++-9 \
+    gcc \
+    gcc-9 \
+    libtool \
+    ocaml \
+    ocaml-compiler-libs \
+    ocaml-interp \ 
+    ocaml-nox \
+    && rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/apt/archives/*
 
 # install packages needed for substrate
-RUN apt-get update && \
-    apt-get install -y cmake pkg-config libssl-dev git gcc build-essential && \
-    rm -rf /var/lib/apt/lists/* && \
+RUN apt-get update && apt-get install -y \ 
+    cmake \
+    pkg-config \
+    libssl-dev \
+    git \
+    gcc \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/* && \
     rm -rf /var/cache/apt/archives/*
 
 # install LLVM to compile ring into WASM
-RUN apt-get update && \
-    wget https://apt.llvm.org/llvm.sh && \
-    chmod +x llvm.sh && \
-    ./llvm.sh 10 && \
-    rm -rf /var/lib/apt/lists/* && \
+RUN apt-get update && apt-get install -y \
+    clang-13 \
+    lldb-13 \
+    lld-13 \
+    clangd \
+    && rm -rf /var/lib/apt/lists/* && \
     rm -rf /var/cache/apt/archives/*
 
 # install additional tools
-RUN apt-get update && \
-    apt-get install -y tmux nano && \
-    rm -rf /var/lib/apt/lists/* && \
+RUN apt-get update && apt-get install -y \
+    tmux \
+    nano \
+    && rm -rf /var/lib/apt/lists/* && \
     rm -rf /var/cache/apt/archives/*
 
 # install netcat for healthcheck
-RUN apt-get update && apt-get install -yq netcat
+RUN apt-get update && apt-get install -yq \
+    netcat \
+    && rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/apt/archives/*
 
 # set environment variables
 ENV DEBIAN_FRONTEND noninteractive
