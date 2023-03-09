@@ -22,6 +22,9 @@ FROM ubuntu:22.04
 
 # Install SGX
 
+# Note the manual cleanup step at the end of the command.
+# This is not required, but in the case of a base image change it may be.
+# See #8 for more details.
 RUN apt-get update && apt-get install -y \
     build-essential \
     ocaml \
@@ -31,7 +34,9 @@ RUN apt-get update && apt-get install -y \
     wget \
     python3 \
     libssl-dev \
-    dkms
+    dkms \
+    && rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/apt/archives/*
 
 RUN echo 'deb [signed-by=/etc/apt/keyrings/intel-sgx-keyring.asc arch=amd64] https://download.01.org/intel-sgx/sgx_repo/ubuntu jammy main' | tee /etc/apt/sources.list.d/intel-sgx.list
 
@@ -40,27 +45,35 @@ RUN wget https://download.01.org/intel-sgx/sgx_repo/ubuntu/intel-sgx-deb.key && 
 RUN apt-get update && apt-get install -y \
     libsgx-epid \
     libsgx-quote-ex \
-    libsgx-dcap-ql
+    libsgx-dcap-ql \
+    && rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/apt/archives/*
 
 # Debug symbols for SGX
 RUN apt-get update && apt-get install -y \
     libsgx-urts-dbgsym \
     libsgx-enclave-common-dbgsym \
     libsgx-dcap-ql-dbgsym \
-    libsgx-dcap-default-qpl-dbgsym
+    libsgx-dcap-default-qpl-dbgsym \
+    && rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/apt/archives/*
 
 # DCAP QPL
 RUN apt-get update && apt-get install -y \
     libsgx-dcap-default-qpl \ 
     libsgx-dcap-quote-verify \ 
     libsgx-dcap-quote-verify-dev \
-    libsgx-dcap-quote-verify-dbgsym
+    libsgx-dcap-quote-verify-dbgsym \
+    && rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/apt/archives/*
 
 # Install SGX SDK
 
 RUN apt-get update && apt-get install -y \ 
     build-essential \
-    python3
+    python3 \
+    && rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/apt/archives/*
 
 RUN wget https://download.01.org/intel-sgx/latest/linux-latest/distro/ubuntu22.04-server/sgx_linux_x64_sdk_2.18.101.1.bin && \
     chmod +x ./sgx_linux_x64_sdk_2.18.101.1.bin && \
@@ -69,7 +82,9 @@ RUN wget https://download.01.org/intel-sgx/latest/linux-latest/distro/ubuntu22.0
 RUN apt-get update && apt-get install -y \
     libsgx-enclave-common-dev \
     libsgx-dcap-ql-dev \
-    libsgx-dcap-default-qpl-dev
+    libsgx-dcap-default-qpl-dev \
+    && rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/apt/archives/*
 
 SHELL ["/bin/bash", "-c", "source /opt/sgxsdk/environment"]
 
@@ -121,7 +136,9 @@ RUN apt-get remove -y binutils && \
     ocaml \
     ocaml-compiler-libs \
     ocaml-interp \ 
-    ocaml-nox
+    ocaml-nox \
+    && rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/apt/archives/*
 
 # install packages needed for substrate
 RUN apt-get update && apt-get install -y \ 
@@ -139,7 +156,9 @@ RUN apt-get update && apt-get install -y \
     clang-13 \
     lldb-13 \
     lld-13 \
-    clangd
+    clangd \
+    && rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/apt/archives/*
 
 # install additional tools
 RUN apt-get update && apt-get install -y \
@@ -149,7 +168,10 @@ RUN apt-get update && apt-get install -y \
     rm -rf /var/cache/apt/archives/*
 
 # install netcat for healthcheck
-RUN apt-get update && apt-get install -yq netcat
+RUN apt-get update && apt-get install -yq \
+    netcat \
+    && rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/apt/archives/*
 
 # set environment variables
 ENV DEBIAN_FRONTEND noninteractive
