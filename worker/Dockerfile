@@ -107,15 +107,31 @@ RUN /root/.cargo/bin/rustup self update
 # re-install / downgrade binutils since the baiduxlab/sgx-rust image 
 # comes with ld version 2.35 which cannot compile the node.
 RUN apt-get remove -y binutils && \
-    apt-get update && \
-    apt-get install -y binutils build-essential debhelper dh-autoreconf \
-    dpkg-dev g++ g++-9 gcc gcc-9 libtool ocaml \
-    ocaml-compiler-libs ocaml-interp ocaml-nox
+    apt-get update && apt-get install -y \
+    binutils \ 
+    build-essential \
+    debhelper \
+    dh-autoreconf \
+    dpkg-dev \ 
+    g++ \ 
+    g++-9 \
+    gcc \
+    gcc-9 \
+    libtool \
+    ocaml \
+    ocaml-compiler-libs \
+    ocaml-interp \ 
+    ocaml-nox
 
 # install packages needed for substrate
-RUN apt-get update && \
-    apt-get install -y cmake pkg-config libssl-dev git gcc build-essential && \
-    rm -rf /var/lib/apt/lists/* && \
+RUN apt-get update && apt-get install -y \ 
+    cmake \
+    pkg-config \
+    libssl-dev \
+    git \
+    gcc \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/* && \
     rm -rf /var/cache/apt/archives/*
 
 # install LLVM to compile ring into WASM
@@ -126,9 +142,10 @@ RUN apt-get update && apt-get install -y \
     clangd
 
 # install additional tools
-RUN apt-get update && \
-    apt-get install -y tmux nano && \
-    rm -rf /var/lib/apt/lists/* && \
+RUN apt-get update && apt-get install -y \
+    tmux \
+    nano \
+    && rm -rf /var/lib/apt/lists/* && \
     rm -rf /var/cache/apt/archives/*
 
 # install netcat for healthcheck
