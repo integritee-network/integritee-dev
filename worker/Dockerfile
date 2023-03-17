@@ -43,6 +43,7 @@ RUN echo 'deb [signed-by=/etc/apt/keyrings/intel-sgx-keyring.asc arch=amd64] htt
 RUN wget https://download.01.org/intel-sgx/sgx_repo/ubuntu/intel-sgx-deb.key && cat intel-sgx-deb.key | tee /etc/apt/keyrings/intel-sgx-keyring.asc > /dev/null
 
 RUN apt-get update && apt-get install -y \
+    libsgx-uae-service \
     libsgx-epid \
     libsgx-quote-ex \
     libsgx-dcap-ql \
