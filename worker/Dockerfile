@@ -112,13 +112,6 @@ RUN mkdir -p /ipfs && \
     cd go-ipfs && \
     ./install.sh
 
-# Install Rust
-RUN apt-get update && apt-get install -y curl
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
-
-RUN /root/.cargo/bin/rustup component add rust-src clippy rust-analysis rustfmt
-RUN /root/.cargo/bin/rustup self update
-
 # re-install / downgrade binutils since the baiduxlab/sgx-rust image 
 # comes with ld version 2.35 which cannot compile the node.
 RUN apt-get remove -y binutils && \
@@ -170,13 +163,41 @@ RUN apt-get update && apt-get install -y \
 # install netcat for healthcheck
 RUN apt-get update && apt-get install -yq \
     netcat \
+    curl \
+    gosu \
     && rm -rf /var/lib/apt/lists/* && \
     rm -rf /var/cache/apt/archives/*
+
+
+#
+# Adding default user ubuntu
+# The user id could be changed during start, see entrypoint.sh
+#
+ARG UID=1000
+ARG GUID=1000
+RUN adduser -u ${UID} --disabled-password --gecos '' ubuntu
+RUN adduser -u ${UID} ubuntu sudo
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+#
+# Install Rust
+#
+ENV RUSTUP_HOME=/opt/rust
+ENV CARGO_HOME=/opt/rust
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --no-modify-path
+RUN chmod 777 /opt/rust -R
 
 # set environment variables
 ENV DEBIAN_FRONTEND noninteractive
 ENV TERM xterm
 ENV SGX_SDK /opt/sgxsdk
-ENV PATH "$PATH:${SGX_SDK}/bin:${SGX_SDK}/bin/x64:/root/.cargo/bin"
+ENV PATH "$PATH:${SGX_SDK}/bin:${SGX_SDK}/bin/x64:/opt/rust/bin"
 ENV PKG_CONFIG_PATH "${PKG_CONFIG_PATH}:${SGX_SDK}/pkgconfig"
 ENV LD_LIBRARY_PATH "${LD_LIBRARY_PATH}:${SGX_SDK}/sdk_libs"
+
+COPY entrypoint.sh /entrypoint.sh
+COPY .bashrc /home/ubuntu/
+
+WORKDIR /home/ubuntu
+
+ENTRYPOINT ["/entrypoint.sh"]
