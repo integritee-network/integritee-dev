@@ -35,6 +35,9 @@ RUN apt-get update && apt-get install -y \
     python3 \
     libssl-dev \
     dkms \
+    protobuf-compiler \
+    pip \
+    python3-click \
     && rm -rf /var/lib/apt/lists/* && \
     rm -rf /var/cache/apt/archives/*
 
@@ -61,8 +64,8 @@ RUN apt-get update && apt-get install -y \
 
 # DCAP QPL
 RUN apt-get update && apt-get install -y \
-    libsgx-dcap-default-qpl \ 
-    libsgx-dcap-quote-verify \ 
+    libsgx-dcap-default-qpl \
+    libsgx-dcap-quote-verify \
     libsgx-dcap-quote-verify-dev \
     libsgx-dcap-quote-verify-dbgsym \
     && rm -rf /var/lib/apt/lists/* && \
@@ -70,7 +73,7 @@ RUN apt-get update && apt-get install -y \
 
 # Install SGX SDK
 
-RUN apt-get update && apt-get install -y \ 
+RUN apt-get update && apt-get install -y \
     build-essential \
     python3 \
     && rm -rf /var/lib/apt/lists/* && \
@@ -113,29 +116,29 @@ RUN mkdir -p /ipfs && \
     cd go-ipfs && \
     ./install.sh
 
-# re-install / downgrade binutils since the baiduxlab/sgx-rust image 
+# re-install / downgrade binutils since the baiduxlab/sgx-rust image
 # comes with ld version 2.35 which cannot compile the node.
 RUN apt-get remove -y binutils && \
     apt-get update && apt-get install -y \
-    binutils \ 
+    binutils \
     build-essential \
     debhelper \
     dh-autoreconf \
-    dpkg-dev \ 
-    g++ \ 
+    dpkg-dev \
+    g++ \
     g++-9 \
     gcc \
     gcc-9 \
     libtool \
     ocaml \
     ocaml-compiler-libs \
-    ocaml-interp \ 
+    ocaml-interp \
     ocaml-nox \
     && rm -rf /var/lib/apt/lists/* && \
     rm -rf /var/cache/apt/archives/*
 
 # install packages needed for substrate
-RUN apt-get update && apt-get install -y \ 
+RUN apt-get update && apt-get install -y \
     cmake \
     pkg-config \
     libssl-dev \

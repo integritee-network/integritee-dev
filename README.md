@@ -3,5 +3,7 @@
 ### Parachain
 cd parachain && docker build .
 
-### Parachain
+### integritee-dev (for worker)
 cd worker && docker build .
+
+releases are [published to dockerhub](https://hub.docker.com/r/integritee/integritee-dev/tags)
