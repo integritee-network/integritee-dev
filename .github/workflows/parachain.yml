@@ -1,8 +1,6 @@
 name: Build Parachain Docker Template
 
 on:
-  push:
-    branches:  [ main ]
   release:
     types: [published]
 
