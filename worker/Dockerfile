@@ -204,4 +204,8 @@ COPY .bashrc /home/ubuntu/
 
 WORKDIR /home/ubuntu
 
+# install sccache
+RUN rustup default stable
+RUN cargo install sccache --locked && sccache --version
+
 ENTRYPOINT ["/entrypoint.sh"]
