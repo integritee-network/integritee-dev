@@ -27,6 +27,7 @@ FROM ubuntu:22.04
 # See #8 for more details.
 RUN apt-get update && apt-get install -y \
     build-essential \
+    locales \
     ocaml \
     automake \
     autoconf \
@@ -190,6 +191,12 @@ ENV RUSTUP_HOME=/opt/rust
 ENV CARGO_HOME=/opt/rust
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --no-modify-path
 RUN chmod 777 /opt/rust -R
+
+# unicode support
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
 
 # set environment variables
 ENV DEBIAN_FRONTEND noninteractive
